@@ -1,16 +1,32 @@
 import React, { Component } from 'react';
+import { nanoid } from 'nanoid';
+import styled from 'styled-components';
 
-import { nanoid } from 'nanoid'
+    // Creamos los Botones
+    const Button = styled.button`
 
-import styled from 'styled-components'
+        /* Creamos un boton activado y desactivado (disabled), para esto debemos
+           crear un props en state
+        */
+        background-color:${({disabled})=>disabled ? 'transparent' : '#387EF5' };
+        border:${({disabled})=>disabled ? '1px solid #387EF5' : 'none' };
+        outline:none;
+        border-radius:15px;
+        padding:0.7rem 1.5rem;
+        margin:1rem;
+        color:${({disabled})=>disabled ? '#444' : '#fff' };
+    `
 
 class Chronometer extends Component {
+
+
     // Creamos los primeros elementos que necesita el cronometro para iniciar
     state = {
         hours:0,
         minutes:0,
         seconds:0,
-        miliseconds:0
+        miliseconds:0,
+        running:false
     }
 
     //Función que se llama con el boton start
@@ -54,7 +70,7 @@ class Chronometer extends Component {
              Sacamos el p, para tarer los state, esto se va a caer dado que debemos 
              traer los estados en una constante.
         */
-        let { hours, minutes, seconds, miliseconds } = this.state
+        let { hours, minutes, seconds, miliseconds, running } = this.state
 
         // Usamos la funcion addZero
         hours = this.addZero(hours);
@@ -63,7 +79,13 @@ class Chronometer extends Component {
         miliseconds = this.addZero(miliseconds);
 
         return (
+            <>
             <h3>{`${hours} : ${minutes} : ${seconds} : ${miliseconds}`}</h3>
+                 <Button disabled={running}>START</Button>
+                 <Button disabled={running}>STOP</Button>
+                 <Button disabled={running}>TIMESTAMP</Button>
+                 <Button disabled={running}>RESET</Button>
+            </>
         )
     }
 }
