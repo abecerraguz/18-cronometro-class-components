@@ -5,9 +5,11 @@ import { createGlobalStyle } from 'styled-components'
 
 const GlobalStyle = createGlobalStyle`
     body{
+        font-family:'arial';
         background-color:#222;
         color:#387EF5;
         text-align:center;
+        letter-spacing:1px;
     }
 `
 
