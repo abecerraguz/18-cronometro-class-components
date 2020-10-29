@@ -34,8 +34,10 @@ class Chronometer extends Component {
         minutes: 0,
         seconds: 0,
         miliseconds: 0,
+        // Solo evalua si el cronometro esta en funcionamiento
         running: false,
         allTimestamps: [],
+        //Creamos este estado para saber si hemos utilizado o no el cronometro
         started: false
     }
 
@@ -52,7 +54,7 @@ class Chronometer extends Component {
                 this.tick()
            },100)
 
-           // Al hacer click el setState de running queda en true
+           // Al hacer click el setState de running queda en true y ademas activamos en true 
            this.setState({ running: true, started: true })
         }
     }
@@ -106,6 +108,7 @@ class Chronometer extends Component {
     //Función que se llama con el boton reset
     handleReset = () => {
         this.updateTimer(0, 0, 0, 0)
+        // Reseteamos al array
         this.setState({ allTimestamps: [], started: false })
     }
 
@@ -146,7 +149,7 @@ class Chronometer extends Component {
                  {/* Si no esta en false !running */}
                  <Button disabled={!running} onClick={this.handleStopClick}> STOP </Button>
                  <Button disabled={!running} onClick={this.handleTimestamp}> TIMESTAMP </Button>
-                 <Button disabled={running} onClick={this.handleReset}> RESET </Button>
+                 {this.state.started && <Button disabled={running} onClick={this.handleReset}> RESET </Button>}
 
                  <List>
                     {allTimestamps.map((timestamp, idx) => (
