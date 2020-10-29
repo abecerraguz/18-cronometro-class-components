@@ -43,6 +43,9 @@ class Chronometer extends Component {
            this.interval = setInterval(()=>{
                 this.tick()
            },100)
+
+           // Al hacer click el setState de running queda en true
+           this.setState({ running: true })
         }
     }
 
@@ -73,7 +76,10 @@ class Chronometer extends Component {
 
     //Función que se llama con el boton stop
     handleStopClick = () => {
-
+        if (this.state.running) {
+            clearInterval(this.interval)
+            this.setState({ running: false })
+        }
     }
 
     //Función que se llama con el boton timestamp
@@ -118,8 +124,9 @@ class Chronometer extends Component {
                  {/* Empezamos por activar el start con onClick 
                  y se crea la funcion */}
                  <Button disabled={running} onClick={this.handleStartClick}> START </Button>
-                 <Button disabled={running}>STOP</Button>
-                 <Button disabled={running}>TIMESTAMP</Button>
+                 {/* Si no esta en false !running */}
+                 <Button disabled={!running} onClick={this.handleStopClick}> STOP </Button>
+                 <Button disabled={!running}> TIMESTAMP </Button>
                  <Button disabled={running}>RESET</Button>
             </>
         )
