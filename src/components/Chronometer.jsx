@@ -14,7 +14,9 @@ import styled from 'styled-components';
         border-radius:15px;
         padding:0.7rem 1.5rem;
         margin:1rem;
+        cursor:pointer;
         color:${({disabled})=>disabled ? '#444' : '#fff' };
+
     `
 
 class Chronometer extends Component {
@@ -22,21 +24,51 @@ class Chronometer extends Component {
 
     // Creamos los primeros elementos que necesita el cronometro para iniciar
     state = {
-        hours:0,
-        minutes:0,
-        seconds:0,
-        miliseconds:0,
-        running:false
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+        miliseconds: 0,
+        running: false
     }
 
     //Función que se llama con el boton start
     handleStartClick = () => {
-
+        // Primero debemos comprobar si el cronometro esta funcionado
+        if(!this.state.running){
+            /*
+                El problema de crear un intervalo aquí es que si lo creamos en una cosntante 
+                no podremos accesder al intervalo, para solucionar esto podemos crear una clase
+                esta se llama interval la cual se iguala a un setInterval el cual recibe un callback
+            */
+           this.interval = setInterval(()=>{
+                this.tick()
+           },100)
+        }
     }
 
     //Conteo del cronómetro
     tick() {
+        let hours = this.state.hours
+        let minutes = this.state.minutes
+        let seconds = this.state.seconds
+        let miliseconds = this.state.miliseconds + 1
 
+        if (miliseconds === 10) {
+            miliseconds = 0
+            seconds = seconds + 1
+        }
+
+        if (seconds === 60) {
+            seconds = 0
+            minutes = minutes + 1
+        }
+
+        if (minutes === 60) {
+            minutes = 0
+            hours = hours + 1
+        }
+
+        this.updateTimer(hours, minutes, seconds, miliseconds)
     }
 
     //Función que se llama con el boton stop
@@ -55,8 +87,10 @@ class Chronometer extends Component {
     }
 
     //Función de actualización del estado
-    updateTimer(miliseconds, seconds, minutes, hours) {
-
+    updateTimer(hours, minutes, seconds, miliseconds) {
+        this.setState({
+            hours, minutes, seconds, miliseconds
+        })
     }
 
     // Creamos la funcion AddCero para agregar un cero si se necesita
@@ -70,18 +104,20 @@ class Chronometer extends Component {
              Sacamos el p, para tarer los state, esto se va a caer dado que debemos 
              traer los estados en una constante.
         */
-        let { hours, minutes, seconds, miliseconds, running } = this.state
+       let { hours, minutes, seconds, miliseconds, running } = this.state
 
         // Usamos la funcion addZero
-        hours = this.addZero(hours);
-        minutes = this.addZero(minutes);
-        seconds = this.addZero(seconds);
-        miliseconds = this.addZero(miliseconds);
+        hours = this.addZero(hours)
+        minutes = this.addZero(minutes)
+        seconds = this.addZero(seconds)
+        miliseconds = this.addZero(miliseconds)
 
         return (
             <>
             <h3>{`${hours} : ${minutes} : ${seconds} : ${miliseconds}`}</h3>
-                 <Button disabled={running}>START</Button>
+                 {/* Empezamos por activar el start con onClick 
+                 y se crea la funcion */}
+                 <Button disabled={running} onClick={this.handleStartClick}> START </Button>
                  <Button disabled={running}>STOP</Button>
                  <Button disabled={running}>TIMESTAMP</Button>
                  <Button disabled={running}>RESET</Button>
