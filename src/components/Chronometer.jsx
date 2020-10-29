@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { nanoid } from 'nanoid';
+import { generate as id } from 'shortid'
 import styled from 'styled-components';
 
     // Creamos los Botones
@@ -18,6 +18,12 @@ import styled from 'styled-components';
         color:${({disabled})=>disabled ? '#444' : '#fff' };
 
     `
+    const List = styled.ul`
+        list-style:none;
+        padding-left:0;
+    `
+
+
 
 class Chronometer extends Component {
 
@@ -28,7 +34,9 @@ class Chronometer extends Component {
         minutes: 0,
         seconds: 0,
         miliseconds: 0,
-        running: false
+        running: false,
+        allTimestamps: [],
+        started: false
     }
 
     //Función que se llama con el boton start
@@ -45,7 +53,7 @@ class Chronometer extends Component {
            },100)
 
            // Al hacer click el setState de running queda en true
-           this.setState({ running: true })
+           this.setState({ running: true, started: true })
         }
     }
 
@@ -84,12 +92,21 @@ class Chronometer extends Component {
 
     //Función que se llama con el boton timestamp
     handleTimestamp = () => {
+        const { hours, minutes, seconds, miliseconds, allTimestamps } = this.state
 
+        const timestamp = { hours, minutes, seconds, miliseconds }
+
+        const timestamps = allTimestamps
+
+        timestamps.push(timestamp)
+
+        this.setState({ allTimestamps: timestamps })
     }
 
     //Función que se llama con el boton reset
     handleReset = () => {
-
+        this.updateTimer(0, 0, 0, 0)
+        this.setState({ allTimestamps: [], started: false })
     }
 
     //Función de actualización del estado
@@ -105,12 +122,14 @@ class Chronometer extends Component {
         return value < 10 ? `0${value}` : value
     }
 
+
+
     render() {
         /*
              Sacamos el p, para tarer los state, esto se va a caer dado que debemos 
              traer los estados en una constante.
         */
-       let { hours, minutes, seconds, miliseconds, running } = this.state
+       let { hours, minutes, seconds, miliseconds, running, allTimestamps } = this.state
 
         // Usamos la funcion addZero
         hours = this.addZero(hours)
@@ -126,8 +145,24 @@ class Chronometer extends Component {
                  <Button disabled={running} onClick={this.handleStartClick}> START </Button>
                  {/* Si no esta en false !running */}
                  <Button disabled={!running} onClick={this.handleStopClick}> STOP </Button>
-                 <Button disabled={!running}> TIMESTAMP </Button>
-                 <Button disabled={running}>RESET</Button>
+                 <Button disabled={!running} onClick={this.handleTimestamp}> TIMESTAMP </Button>
+                 <Button disabled={running} onClick={this.handleReset}> RESET </Button>
+
+                 <List>
+                    {allTimestamps.map((timestamp, idx) => (
+                        <li key={id()}>
+                            {`
+                                ${idx + 1} -
+                                ${this.addZero(timestamp.hours)} :
+                                ${this.addZero(timestamp.minutes)} :
+                                ${this.addZero(timestamp.seconds)} :
+                                ${this.addZero(timestamp.miliseconds)}
+                            `}
+                        </li>
+                    ))}
+
+                </List>
+
             </>
         )
     }
